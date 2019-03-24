@@ -1,5 +1,5 @@
 ---
-- hosts: R1
+- hosts: routers
   gather_facts: no
   connection: local
 
@@ -19,4 +19,7 @@
       provider: "{{ provider }}"
       commands:
         - show clock
+    register: clock
+  - name: print output
+    debug: msg={{ clock.stdout_lines }}
 
