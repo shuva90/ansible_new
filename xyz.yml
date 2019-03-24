@@ -1,0 +1,32 @@
+---
+- hosts: R1
+  gather_facts: no
+  connection: local
+
+  tasks:
+  - name: Include Login Credentials
+    include_vars: secrets.yml
+
+  - name: Define Provider
+    set_fact:
+      provider:
+        host: "{{ ansible_host }}"
+        username: "{{ creds['username'] }}"
+        password: "{{ creds['password'] }}"
+
+  tasks:
+
+  - name: CONFIGURE BANNER ON CISCO DEVICES
+    ios_banner:
+      banner: login
+      text: "{{ lookup('file', '/etc/ansible/raw_banner.cfg') }}"
+      state: present
+
+  - name: SHOW RUN | BEG BANNER 
+    ios_command:
+      commands:
+        - show run | beg this
+    register: banner
+  - name: debug
+    debug: msg={{ banner.stdout_lines }}
+
